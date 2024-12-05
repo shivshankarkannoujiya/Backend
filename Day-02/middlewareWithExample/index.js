@@ -38,7 +38,7 @@ app.post("/health-check", (req, res) => {
 })
 
 
-// global catchtes
+// TODO: global catchtes
 app.use((err, req, res, next) => {
     return res
         .status(500)
