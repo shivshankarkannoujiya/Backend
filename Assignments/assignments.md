@@ -10,3 +10,10 @@
 
 - Count the number of requests
 - Find the average time your server is taking to handle requests
+
+## Day - 3
+
+- Create a middleware for logging the number of requests on a server
+- Create a middleware for rate limiting a user request based on their username passed in the header
+- Create a middleware for logging the number of errors on a server 
+ 
