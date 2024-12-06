@@ -19,7 +19,7 @@
 
 ## JWT
 
-- Write a function that takes in a `username` and `password` and returns a JWT token with the username encoded. should return null if the username is not a valid email or if the password is less than 6 character. Try using the zod library here
+- Write a function that takes in a `username` and `password` and returns a JWT token with the username encoded inside an object. should return null if the username is not a valid email or if the password is less than 6 character. Try using the zod library here
 
 - Write a function that takes a `JWT` as input and return true if the JWT can be DECODED (not verified). Return false otherwise
 
