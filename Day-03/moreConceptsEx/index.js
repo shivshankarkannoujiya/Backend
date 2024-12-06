@@ -49,6 +49,14 @@ app.post("/user", (req, res) => {
 
 
 
+// Error handling middleware
+
+let errorCount = 0
+app.use((err, req, res, next) => {
+    return res.status(400).json({ message: `Something went up with our server` })
+    errorCount++
+})
+
 
 
 app.listen(PORT, () => {
