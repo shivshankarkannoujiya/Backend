@@ -1,6 +1,7 @@
 import express from "express"
 import { connectDB } from "./config/db.js"
 import { User } from "./model/user.model.js"
+import bcypt from "bcrypt"
 
 const app = express()
 const PORT = 3000
@@ -45,10 +46,13 @@ app.post("/signup", async (req, res) => {
             })
     }
 
+    // TODO: Hash Password before saving into database
+    const hashedPassword = await bcypt.hash(password, 10)
+
     const user = new User({
         name,
         email,
-        password
+        password: hashedPassword
     })
 
     await user.save()
