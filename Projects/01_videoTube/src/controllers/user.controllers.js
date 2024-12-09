@@ -220,4 +220,30 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
-export { registerUser, loginUser, refreshAccessToken };
+const logoutUser = asyncHandler(async (req, res) => {
+    // 1. set refreshToken: ""/undefined/null
+    await User.findByIdAndUpdate(
+        req.user._id, // from auth middleware
+        {
+            $set: {
+                refreshToken: undefined,
+            },
+        },
+
+        { new: true }
+    );
+
+    //2. release cookies
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+    };
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", accessToken, options)
+        .clearCookie("refreshToken", refreshToken, options)
+        .json(new APiResponse(200, {}, "User logged Out successfully"));
+});
+
+export { registerUser, loginUser, refreshAccessToken, logoutUser };
