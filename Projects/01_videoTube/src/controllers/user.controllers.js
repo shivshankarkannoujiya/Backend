@@ -3,6 +3,31 @@ import { ApiError } from "../utils/ApiError.js";
 import { APiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
 
+const generateAccessAndRefereshToken = async (userId) => {
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new ApiError(404, "User with userId does not exist");
+        }
+
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
+
+        return {
+            accessToken,
+            refreshToken,
+        };
+    } catch (error) {
+        throw new ApiError(
+            500,
+            "Something went wrong while generating refresh and access token"
+        );
+    }
+};
+
 const registerUser = asyncHandler(async (req, res) => {
     const { fullName, email, username, password } = req.body;
 
@@ -80,4 +105,60 @@ const registerUser = asyncHandler(async (req, res) => {
         );
 });
 
-export { registerUser };
+const loginUser = asyncHandler(async (req, res) => {
+    // get data from body
+    const { email, username, password } = req.body;
+
+    // validation
+    if (!(email && password)) {
+        throw new ApiError(400, "email and password is required");
+    }
+
+    // check is User exist
+    const user = await User.findOne({
+        $or: [{ email }, { username }],
+    });
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    // validate Password: match saved password & entered password
+    const isPasswordValid = await user.isPassworCorrect(password);
+
+    if (!isPasswordValid) {
+        throw new ApiError(401, "Invalid Credential");
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefereshToken(
+        user._id
+    );
+
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    );
+
+    // TODO: Creaft better way
+    if (!loggedInUser) {
+        throw new ApiError(404, "loggedIn user not found");
+    }
+
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+    };
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new APiResponse(
+                200,
+                { user: loggedInUser, accessToken, refreshToken },
+                "User loggedIn Successfully"
+            )
+        );
+});
+
+export { registerUser, loginUser };
