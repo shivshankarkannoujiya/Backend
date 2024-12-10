@@ -1,4 +1,3 @@
-import { json } from "express";
 import { User } from "../models/user.models.js";
 
 const signupUser = async (req, res) => {
