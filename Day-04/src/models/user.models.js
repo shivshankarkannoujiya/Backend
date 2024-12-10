@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.model(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -14,18 +14,16 @@ const userSchema = new mongoose.model(
       required: true,
     },
 
-    purchasedCourses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-      },
-    ],
+    purchasedCourses: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"Course"
+    }]
   },
   { timestamps: true }
 );
 
 userSchema.pre("save", async function (next) {
-  if (!this.isMOdified("password")) return next();
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });

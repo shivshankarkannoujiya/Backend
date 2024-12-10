@@ -21,6 +21,6 @@ const courseSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  {timestamps: true}
 );
 export const Course = mongoose.model("Course", courseSchema);

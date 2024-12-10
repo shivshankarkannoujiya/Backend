@@ -5,7 +5,7 @@ const signupAdmin = async (req, res) => {
 
     const { username, password } = req.body
         
-    if (!username && !password) {
+    if (!username || !password) {
         return res
             .status(400)
             .json({
@@ -21,7 +21,7 @@ const signupAdmin = async (req, res) => {
             return res
                 .status(409)
                 .json({
-                    message: "Admin already exist with usrname"
+                    message: "Admin already exist with username"
                 })
         }
     
