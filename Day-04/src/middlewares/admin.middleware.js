@@ -36,7 +36,4 @@ const adminMiddleware = async function (req, res, next) {
   }
 };
 
-
-export {
-  adminMiddleware
-}
+export { adminMiddleware };
