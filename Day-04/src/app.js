@@ -17,8 +17,10 @@ app.use(cookieParser());
 //importing routers
 import userRouter from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js";
+import courseRouter from "./routes/course.routes.js"
 
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/course", courseRouter);
 
 export { app };
