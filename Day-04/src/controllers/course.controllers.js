@@ -41,4 +41,20 @@ const createCourse = async (req, res) => {
     }
 };
 
-export { createCourse };
+const getAllCourses = async (req, res) => {
+    const courses = await Course.find({});
+    if (!courses) {
+        return res.status(404).json({
+            message: "No Courses Exist",
+        });
+    }
+
+    return res.status(200).json({
+        courses: {
+            courses,
+        },
+        message: "Courses fetched Successfully",
+    });
+};
+
+export { createCourse, getAllCourses };
