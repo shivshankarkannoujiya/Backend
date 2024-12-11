@@ -22,7 +22,7 @@ adminSchema.pre("save", async function (next) {
     next()
 })
 
-adminSchema.methods.IsPasswordCorrect =  function (password) {
+adminSchema.methods.isPasswordCorrect =  function (password) {
     return bcrypt.compare(password, this.password)
 }
 
