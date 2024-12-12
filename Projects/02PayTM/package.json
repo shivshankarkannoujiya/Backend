@@ -1,0 +1,23 @@
+{
+  "name": "paytm",
+  "version": "1.0.0",
+  "description": "Ccreating a dummy PayTM application ",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
+  },
+  "author": "Shivshankar",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.4",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}
