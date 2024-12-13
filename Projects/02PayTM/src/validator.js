@@ -13,4 +13,10 @@ const signinBody = z.object({
 })
 
 
-export { signupBody, signinBody }
+const updateBodySchema = z.object({
+    password: z.string().min(8).optional(),
+    firstname: z.string().optional(),
+    lastname: z.string().optional()
+})
+
+export { signupBody, signinBody, updateBodySchema }

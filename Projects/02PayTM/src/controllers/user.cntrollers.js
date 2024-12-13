@@ -1,5 +1,5 @@
 import { User } from "../models/user.models.js";
-import { signinBody, signupBody } from "../validator.js";
+import { signinBody, signupBody, updateBodySchema } from "../validator.js";
 
 const generateAccessTokens = async function (userId) {
     const user = await User.findById(userId);
@@ -121,4 +121,47 @@ const singinUser = async (req, res) => {
         });
     }
 };
-export { signupUser, singinUser };
+
+const updateInformation = async (req, res) => {
+    try {
+        const { success, data } = updateBodySchema.safeParse(req.body);
+        if (!success) {
+            return res.status(400).json({
+                message: "Validation Error",
+                errors: success.errors,
+            });
+        }
+
+        const { firstname, lastname, password } = data;
+
+        const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set: {
+                    firstname,
+                    lastname,
+                    password,
+                },
+            },
+            { new: true }
+        ).select("-password");
+
+        if (user.modifiedCount === 0) {
+            return res.status(404).json({
+                message: "user not found or no changes were made",
+            });
+        }
+
+        return res.status(200).json({
+            updatedUser: user,
+            message: "User updated successfully",
+        });
+    } catch (error) {
+        console.log("Error updating user: ", error);
+        return res.status(500).json({
+            message: "Something went wrong while updating user",
+        });
+    }
+};
+
+export { signupUser, singinUser, updateInformation };

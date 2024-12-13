@@ -16,12 +16,6 @@ const authMiddleware = async (req, res, next) => {
     try {
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-        if (decodedToken.exp) {
-            return res.status(401).json({
-                message: "Token has exppired. Please login again ",
-            });
-        }
-
         const user = await User.findById(decodedToken._id).select("-password");
 
         if (!user) {
