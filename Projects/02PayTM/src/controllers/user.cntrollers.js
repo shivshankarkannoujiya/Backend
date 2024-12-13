@@ -1,5 +1,10 @@
 import { User } from "../models/user.models.js";
-import { signinBody, signupBody, updateBodySchema } from "../validator.js";
+import {
+    changePasswordSchema,
+    signinBody,
+    signupBody,
+    updateBodySchema,
+} from "../validator.js";
 
 const generateAccessTokens = async function (userId) {
     const user = await User.findById(userId);
@@ -132,7 +137,7 @@ const updateInformation = async (req, res) => {
             });
         }
 
-        const { firstname, lastname, password } = data;
+        const { firstname, lastname } = data;
 
         const user = await User.findByIdAndUpdate(
             req.user?._id,
@@ -140,7 +145,6 @@ const updateInformation = async (req, res) => {
                 $set: {
                     firstname,
                     lastname,
-                    password,
                 },
             },
             { new: true }
@@ -164,4 +168,42 @@ const updateInformation = async (req, res) => {
     }
 };
 
-export { signupUser, singinUser, updateInformation };
+const changePassword = async (req, res) => {
+    const { success, data } = changePasswordSchema.safeParse(req.body);
+    if (!success) {
+        return res.status(400).json({
+            message: "Validation Error",
+            errors: success.errors,
+        });
+    }
+
+    const { oldPassword, newPassword } = data;
+
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+        return res.status(404).json({
+            message: "User not found",
+        });
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+    if (!isPasswordValid) {
+        return res.status(401).json({
+            message: "Old Password is incorrect",
+        });
+    }
+
+    user.password = newPassword;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+        message: "Password Changed successfully",
+    });
+};
+
+// const getAllUser = async (req, res) => {
+//     const user = await User.find({})
+
+// }
+
+export { signupUser, singinUser, updateInformation,changePassword };
