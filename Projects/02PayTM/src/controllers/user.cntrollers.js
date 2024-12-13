@@ -52,7 +52,6 @@ const signupUser = async (req, res) => {
         return res.status(201).json({
             data: {
                 user: createdUser,
-                accessToken: accessToken,
             },
             message: "User created successfully",
         });
