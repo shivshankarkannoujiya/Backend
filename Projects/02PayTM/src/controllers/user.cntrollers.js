@@ -15,15 +15,17 @@ const generateAccessTokens = async function (userId) {
 
 const signupUser = async (req, res) => {
     try {
-        const { success } = signupBody.safeParse(req.body);
+        const { success, data } = signupBody.safeParse(req.body);
         if (!success) {
-            return res.status(411).json({
+            return res.status(401).json({
                 message: "Invalid inputs",
             });
         }
 
+        const { username, firstname, lastname, password } = data;
+
         const existingUser = await User.findOne({
-            username: req.body.username,
+            username: username,
         });
 
         if (existingUser) {
@@ -33,10 +35,10 @@ const signupUser = async (req, res) => {
         }
 
         const user = await User.create({
-            username: req.body.username,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            password: req.body.lastname,
+            username,
+            firstname,
+            lastname,
+            password,
         });
 
         // TODO: once remove select and see output
@@ -55,6 +57,7 @@ const signupUser = async (req, res) => {
             message: "User created successfully",
         });
     } catch (error) {
+        console.log("Error while creating User: ", error);
         return res.status(500).json({
             message: error?.message || "Something went wrong while signup User",
         });
@@ -63,23 +66,26 @@ const signupUser = async (req, res) => {
 
 const singinUser = async (req, res) => {
     try {
-        const { success } = signinBody.safeParse(req.body);
+        const { success, data } = signinBody.safeParse(req.body);
+
         if (!success) {
             return res.status(401).json({
                 message: "Invalid Input",
             });
         }
 
-        const user = await User.findOne({ username: req.body.username });
+        const { username, password } = data;
+
+        const user = await User.findOne({ username });
         if (!user) {
             return res.status(404).json({
-                message: "User does not registered",
+                message: "User is not registered",
             });
         }
 
-        const isPasswordValid = await user.isPasswrodCorrect(req.body.password);
+        const isPasswordValid = await user.isPasswordCorrect(password);
         if (!isPasswordValid) {
-            return res.status(411).json({
+            return res.status(401).json({
                 message: "invalid Credentials",
             });
         }
@@ -95,7 +101,8 @@ const singinUser = async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: req.secure || process.env.NODE_ENV === "production",
+            sameSite: "Strict",
         };
 
         return res
@@ -109,11 +116,10 @@ const singinUser = async (req, res) => {
                 message: "User loggedIn successfully",
             });
     } catch (error) {
-        return res
-            .status(500)
-            .json({
-                message: error?.message || "Something went wrong while log in User"
-            })
+        console.log("Error logging in user: ", error);
+        return res.status(500).json({
+            message: error?.message || "An error occured while logging in user",
+        });
     }
 };
 export { signupUser, singinUser };

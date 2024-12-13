@@ -40,7 +40,7 @@ userSchema.pre("save", async function (next) {
     next();
 });
 
-userSchema.methods.isPasswrodCorrect = function (password) {
+userSchema.methods.isPasswordCorrect = function (password) {
     return bcrypt.compare(password, this.password);
 };
 
