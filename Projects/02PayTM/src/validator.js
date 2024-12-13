@@ -7,4 +7,10 @@ const signupBody = z.object({
     password: z.string().min(8)
 })
 
-export { signupBody }
+const signinBody = z.object({
+    username: z.string().email(),
+    password: z.string().min(8)
+})
+
+
+export { signupBody, signinBody }

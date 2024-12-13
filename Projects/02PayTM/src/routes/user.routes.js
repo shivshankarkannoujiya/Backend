@@ -1,12 +1,8 @@
 import { Router } from "express";
-import { signupUser } from "../controllers/user.cntrollers.js";
+import { signupUser, singinUser } from "../controllers/user.cntrollers.js";
 
+const router = Router();
+router.route("/signup").post(signupUser);
+router.route("/signin").post(singinUser);
 
-const router = Router()
-router.route("/signup").post(signupUser)
-
-
-
-
-
-export default router
+export default router;

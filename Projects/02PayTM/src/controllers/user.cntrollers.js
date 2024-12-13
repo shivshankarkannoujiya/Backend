@@ -1,5 +1,5 @@
 import { User } from "../models/user.models.js";
-import { signupBody } from "../validator.js";
+import { signinBody, signupBody } from "../validator.js";
 
 const generateAccessTokens = async function (userId) {
     const user = await User.findById(userId);
@@ -47,23 +47,13 @@ const signupUser = async (req, res) => {
             });
         }
 
-        const accessToken = await generateAccessTokens(user._id);
-
-        const options = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-        };
-
-        return res
-            .status(201)
-            .cookie("accessToken", accessToken, options)
-            .json({
-                data: {
-                    user: createdUser,
-                    accessToken: accessToken,
-                },
-                message: "User created successfully",
-            });
+        return res.status(201).json({
+            data: {
+                user: createdUser,
+                accessToken: accessToken,
+            },
+            message: "User created successfully",
+        });
     } catch (error) {
         return res.status(500).json({
             message: error?.message || "Something went wrong while signup User",
@@ -71,4 +61,59 @@ const signupUser = async (req, res) => {
     }
 };
 
-export { signupUser };
+const singinUser = async (req, res) => {
+    try {
+        const { success } = signinBody.safeParse(req.body);
+        if (!success) {
+            return res.status(401).json({
+                message: "Invalid Input",
+            });
+        }
+
+        const user = await User.findOne({ username: req.body.username });
+        if (!user) {
+            return res.status(404).json({
+                message: "User does not registered",
+            });
+        }
+
+        const isPasswordValid = await user.isPasswrodCorrect(req.body.password);
+        if (!isPasswordValid) {
+            return res.status(411).json({
+                message: "invalid Credentials",
+            });
+        }
+
+        const accessToken = await generateAccessTokens(user._id);
+
+        const loggedInUser = await User.findById(user._id).select("-password");
+        if (!loggedInUser) {
+            return res.status(404).json({
+                message: "loggedIn User not found !",
+            });
+        }
+
+        const options = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        };
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .json({
+                data: {
+                    user: loggedInUser,
+                    accessToken: accessToken,
+                },
+                message: "User loggedIn successfully",
+            });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                message: error?.message || "Something went wrong while log in User"
+            })
+    }
+};
+export { signupUser, singinUser };
