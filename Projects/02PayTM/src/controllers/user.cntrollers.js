@@ -201,9 +201,34 @@ const changePassword = async (req, res) => {
     });
 };
 
-// const getAllUser = async (req, res) => {
-//     const user = await User.find({})
 
-// }
+// TODO: Re-implement
+const getUsers = async (req, res) => {
+    const filter = req.query.filter || "";
 
-export { signupUser, singinUser, updateInformation,changePassword };
+    const users = await User.find({
+        $or: [
+            {
+                firstname: {
+                    $regex: filter,
+                },
+            },
+            {
+                lastname: {
+                    $regex: filter,
+                },
+            },
+        ],
+    });
+
+    return res.status(200).json({
+        user: users.map((user) => ({
+            username: user.username,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            _id: user._id,
+        })),
+    });
+};
+
+export { signupUser, singinUser, updateInformation, changePassword, getUsers };
