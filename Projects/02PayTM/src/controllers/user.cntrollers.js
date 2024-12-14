@@ -1,4 +1,5 @@
 import { User } from "../models/user.models.js";
+import { Account } from "../models/account.models.js";
 import {
     changePasswordSchema,
     signinBody,
@@ -53,6 +54,12 @@ const signupUser = async (req, res) => {
                 message: "Something went wrong while creating User",
             });
         }
+
+        // TODO: Create new Account
+        await Account.create({
+            userId: createdUser._id,
+            balance: 1 + Math.random() * 10000,
+        });
 
         return res.status(201).json({
             data: {
@@ -200,7 +207,6 @@ const changePassword = async (req, res) => {
         message: "Password Changed successfully",
     });
 };
-
 
 // TODO: Re-implement
 const getUsers = async (req, res) => {
