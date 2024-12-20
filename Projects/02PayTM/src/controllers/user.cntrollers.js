@@ -56,10 +56,15 @@ const signupUser = async (req, res) => {
         }
 
         // TODO: Create new Account
-        await Account.create({
+        
+        const account = await Account.create({
             userId: createdUser._id,
             balance: 1 + Math.random() * 10000,
         });
+
+        await account.save()
+        console.log("Account created", account);
+        
 
         return res.status(201).json({
             data: {

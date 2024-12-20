@@ -16,4 +16,6 @@ const accountSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
+console.log('Creating account')
+
 export const Account = mongoose.model("Account", accountSchema);
