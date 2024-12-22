@@ -1,7 +1,7 @@
 import { Client } from "pg";
 
 const client = new Client({
-    connectionString: `postgresql://firstDB_owner:2GaR1fgZlnAu@ep-shrill-thunder-a5r71dcq.us-east-2.aws.neon.tech/firstDB?sslmode=require`
+    connectionString: `<connectionString>`
 })
 
 
