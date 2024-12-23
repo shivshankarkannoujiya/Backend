@@ -103,3 +103,68 @@ const deleteUser = async (username: string) => {
 }
 
 // deleteUser("ab@gmail.com")
+
+
+// ++++++++++++++++++++++++++++++++Todo+++++++++++++++++++++++++++++++++++++++
+
+// TODO: Create Todo
+const createTodo = async (
+    userId: number,
+    title: string,
+    description: string
+) => {
+    const todo = await prisma.todo.create({
+        data: {
+            userId,
+            title,
+            description
+        }
+    })
+    console.log(`TODO`, todo)
+}
+
+// createTodo(1, "Code", "Code daily")
+
+
+// TODO: get Todos
+const getTodos = async (userId: number) => {
+    const Todos = await prisma.todo.findMany({
+        where: {
+            userId
+        }
+    })
+    console.log(`Todos: `,  Todos )
+}
+
+// getTodos(1);
+
+// TODO: Write a function that gives you the todo details of a user along with the user details
+const getTodosAndUserDetails = async (
+    userId: number
+) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId
+        },
+        select: {
+            username: true,
+            firstname: true,
+            lastname: true
+        }
+    })
+
+    const todo = await prisma.todo.findMany({
+        where: {
+            userId
+        }
+    })
+
+    console.log(`User: `, user)
+    console.log(`Todo: `, todo)
+}
+
+// getTodosAndUserDetails(1);
+
+
+// TODO: Better way : Using Join
+
