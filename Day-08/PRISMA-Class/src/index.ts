@@ -167,4 +167,26 @@ const getTodosAndUserDetails = async (
 
 
 // TODO: Better way : Using Join
+const getTodosAndUser = async (userId: number) => {
+    const Todos = await prisma.todo.findMany({
+        where: {
+            userId: userId
+        },
+        select: {
+            // user: true,
+            title: true,
+            description: true,
+            user: {
+                select: {
+                    id: true,
+                    username: true,
+                    firstname: true,
+                    lastname: true
+                }
+            }
+        }
+    })
+    console.log(`Result: `, Todos)
+}
 
+getTodosAndUser(1)
