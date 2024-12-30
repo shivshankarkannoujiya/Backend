@@ -1,7 +1,7 @@
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
+	async fetch(request: Request, env, ctx): Promise<Response> {
 		return Response.json({
-			message: 'Hello Ji',
+			message: 'You sent a get request',
 		});
 	},
 } satisfies ExportedHandler<Env>;
