@@ -10,7 +10,7 @@ const insertUser = async (
     lastname: string,
     email: string
 ) => {
-    const respnse = await prisma.user.create({
+    const response = await prisma.user.create({
         data: {
             username,
             password,
@@ -19,15 +19,45 @@ const insertUser = async (
             email
         }
     })
-    console.log('User added successfully: ', respnse)
+    console.log('User added successfully: ', response)
 }
 
-insertUser(
-    'user2',
-    '12345abc',
-    'firstName1',
-    'lastName1',
-    'useron1@gmail.com'
-)
+// insertUser(
+//     'user2',
+//     '12345abc',
+//     'firstName1',
+//     'lastName1',
+//     'useron1@gmail.com'
+// )
 
-// TODO: CRUD 
+
+// TODO: Update
+
+interface updateParams  {
+    firstname: string,
+    lastname: string
+}
+
+const UpdateUserDetails = async (
+    username: string,
+    {
+        firstname,
+        lastname
+    }: updateParams
+) => {
+    const response = await prisma.user.update({
+        where: { username },
+        data: {
+            firstname,
+            lastname
+        }
+    })
+    console.log('User details updated successfully: ', response)
+}
+
+UpdateUserDetails(
+    'user2', {
+       firstname: 'updatedFirstName',
+        lastname: 'UpdatedLastName'
+    }
+)
