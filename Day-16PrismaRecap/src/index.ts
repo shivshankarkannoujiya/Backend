@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { title } from "process";
 
 const prisma = new PrismaClient();
 
@@ -32,7 +33,6 @@ const insertUser = async (
 
 
 // TODO: Update
-
 interface updateParams  {
     firstname: string,
     lastname: string
@@ -55,9 +55,50 @@ const UpdateUserDetails = async (
     console.log('User details updated successfully: ', response)
 }
 
-UpdateUserDetails(
-    'user2', {
-       firstname: 'updatedFirstName',
-        lastname: 'UpdatedLastName'
-    }
-)
+// UpdateUserDetails(
+//     'user2', {
+//        firstname: 'updatedFirstName',
+//         lastname: 'UpdatedLastName'
+//     }
+// )
+
+
+// TODO: Insert Todo
+const insertTodo = async (
+    title: string,
+    description: string,
+    userId: number
+) => {
+    const response = await prisma.todo.create({
+        data: {
+            title: title,
+            description: description,
+            userId: userId
+        }
+    })
+    console.log('Todo inserted successfully: ', response)
+}
+
+
+// insertTodo(
+//    'Goto gym',
+//     'goto to gym everyday',
+//     1
+// )
+
+
+const getUserAndTodosDetails = async (userId: number) => {
+    const response = await prisma.todo.findMany({
+        where: { userId: userId },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            user: true
+        }
+        
+    })
+    console.log(response)
+}
+
+getUserAndTodosDetails(1);
